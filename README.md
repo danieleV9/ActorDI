@@ -1,13 +1,12 @@
 # ActorDI
 
-**ActorDI** è un framework per la dependency injection in Swift, progettato per essere `@MainActor-safe` e semplice da usare in contesti asincroni e modulari.
+**ActorDI** è un framework per la dependency injection in Swift, progettato per essere semplice da usare in contesti asincroni e modulari.
 
 ## 🚀 Features
 
 - Supporto a `@propertyWrapper` per injection semplice (`Inject<T>`)
 - Scope configurabili (singleton, transient, ecc.)
 - `async/await` compatibile
-- Sicuro da usare con `MainActor` in app SwiftUI e UIKit
 
 ## 🛠 Esempio di utilizzo
 
