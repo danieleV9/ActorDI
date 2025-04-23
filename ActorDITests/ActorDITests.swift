@@ -10,8 +10,29 @@ import Testing
 
 struct ActorDITests {
 
-    @Test func example() async throws {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+    @Test
+    func testSuccessfulResolution() async throws {
+        let container = DIContainer()
+        
+        await container.register(Service.self, scope: .singleton) {
+            HelloService()
+        }
+
+        var wrapper = Inject<Service>()
+        try await wrapper.resolve(from: container)
+
+        #expect(wrapper.wrappedValue.greet() == "Hello World")
     }
+    
+    @Test
+    func testResolutionFailsForUnregisteredType() async {
+        let container = DIContainer()
+        var wrapper = Inject<CiaoService>()
+
+        await #expect(throws: DIContainerError.self) {
+            try await wrapper.resolve(from: container)
+        }
+    }
+
 
 }

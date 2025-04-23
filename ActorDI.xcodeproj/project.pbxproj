@@ -66,6 +66,13 @@
 			);
 			target = 2960436F2DB977FA009659DB /* ActorDI */;
 		};
+		29A954802DB9A3F600F8B06D /* Exceptions for "Runner" folder in "ActorDITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Protocols.swift,
+			);
+			target = 296043792DB977FA009659DB /* ActorDITests */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -84,6 +91,9 @@
 		};
 		2960439D2DB985D0009659DB /* Runner */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				29A954802DB9A3F600F8B06D /* Exceptions for "Runner" folder in "ActorDITests" target */,
+			);
 			path = Runner;
 			sourceTree = "<group>";
 		};
