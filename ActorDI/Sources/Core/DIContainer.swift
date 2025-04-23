@@ -32,17 +32,14 @@ public actor DIContainer {
     public func resolve<T>(_ type: T.Type = T.self) async throws -> T {
         let key = ObjectIdentifier(type)
 
-        // Controlla se esiste un singleton registrato
         if let instance = singletons[key] as? T {
             return instance
         }
-        
-        // Controlla se esiste una factory registrata
-        if let factory = factories[key] {
-            return factory() as! T
+
+        if let factory = factories[key], let instance = factory() as? T {
+            return instance
         }
-        
-        // Se nessuna dipendenza è trovata, solleva un errore
+
         throw DIContainerError.dependencyNotFound(type: "\(type)")
     }
 }
