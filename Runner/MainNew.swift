@@ -17,26 +17,41 @@ struct MainNew {
             HelloService()
         }
 
-        var serviceWrapper = Inject<Service>()
+        async let task1: Void = {
+            var serviceWrapper = Inject<Service>()
+            do {
+                try await serviceWrapper.resolve(from: container)
+                print("Task 1: \(serviceWrapper.wrappedValue.greet())")
+            } catch let error as DIContainerError {
+                print("Task 1 - DIContainer error: \(error.description)")
+            } catch {
+                print("Task 1 - Error: \(error)")
+            }
+        }()
 
-        do {
-            try await serviceWrapper.resolve(from: container)
-            print(serviceWrapper.wrappedValue.greet())  // Output: Hello World
-        } catch let error as DIContainerError {
-            print("Errore DIContainer: \(error.description)")
-        } catch {
-            print("Errore generico: \(error)")
-        }
+        async let task2: Void = {
+            var serviceWrapper = Inject<Service>()
+            do {
+                try await serviceWrapper.resolve(from: container)
+                print("Task 2: \(serviceWrapper.wrappedValue.greet())")
+            } catch let error as DIContainerError {
+                print("Task 2 - DIContainer error: \(error.description)")
+            } catch {
+                print("Task 2 - Error: \(error)")
+            }
+        }()
 
-        // Caso di errore: CiaoService non è registrato
-        var unknownWrapper = Inject<CiaoService>()
+        _ = await (task1, task2)
+
+        // Try to resolve a type that hasn't been registered
+        var unknownWrapper = Inject<Clock>()
         do {
             try await unknownWrapper.resolve(from: container)
-            print(unknownWrapper.wrappedValue.greet())
+            print(unknownWrapper.wrappedValue.currentTime())
         } catch let error as DIContainerError {
-            print("Errore DIContainer: \(error.description)")
+            print("DIContainer error: \(error.description)")
         } catch {
-            print("Errore generico: \(error)")
+            print("Error: \(error)")
         }
     }
 }

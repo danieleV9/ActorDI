@@ -11,6 +11,10 @@ protocol Service {
     func greet() -> String
 }
 
+protocol Clock {
+    func currentTime() -> String
+}
+
 class HelloService: Service {
     func greet() -> String {
         return "Hello World"
