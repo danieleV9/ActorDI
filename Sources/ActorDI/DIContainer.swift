@@ -31,14 +31,15 @@ import Foundation
 /// - Registered singletons are stored internally and reused across resolutions.
 /// - Transient registrations provide a new instance for each resolution.
 ///
-/// See Also:
-/// - `DIScope` for available registration lifecycles.
-/// - `DIContainerError` for error scenarios.
+
 public actor DIContainer {
+    
+    public static let shared = DIContainer()
+    
     private var singletons: [ObjectIdentifier: Any] = [:]
     private var factories: [ObjectIdentifier: () -> Any] = [:]
 
-    public init() {}
+    private init() {}
 
     public func register<T>(_ type: T.Type, scope: DIScope = .transient, factory: @escaping @Sendable () -> T) {
         let key = ObjectIdentifier(type)
@@ -52,6 +53,7 @@ public actor DIContainer {
             singletons[key] = factory()
             
         case .transient:
+            singletons[key] = nil
             factories[key] = factory
         }
     }
@@ -68,5 +70,10 @@ public actor DIContainer {
         }
 
         throw DIContainerError.dependencyNotFound(type: "\(type)")
+    }
+    
+    public func resetAll() {
+        self.singletons.removeAll()
+        self.factories.removeAll()
     }
 }

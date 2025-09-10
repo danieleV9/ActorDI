@@ -19,7 +19,7 @@ import Foundation
 ///
 /// Before accessing the wrapped value, the dependency must be resolved using the provided `resolve(from:)` method:
 /// ```swift
-/// try await _$service.resolve(from: container)
+/// try await _service.resolve(from: container)
 /// ```
 ///
 /// - Note: Accessing the wrapped value before resolving the dependency will cause a runtime error.
@@ -32,8 +32,8 @@ public struct Inject<T: Sendable> {
 
     public init() {}
 
-    public mutating func resolve(from container: DIContainer) async throws {
-        self.value = try await container.resolve(T.self)
+    public mutating func resolve() async throws {
+        self.value = try await DIContainer.shared.resolve(T.self)
     }
 
     public var wrappedValue: T {
@@ -43,5 +43,3 @@ public struct Inject<T: Sendable> {
         return value
     }
 }
-
-
