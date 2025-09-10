@@ -11,17 +11,15 @@ import Testing
 struct ActorDITests {
 
     @Test
-    func testSuccessfulResolution() async throws {
-        let container = DIContainer()
-        
-        await container.register(Service.self, scope: .singleton) {
+    func testAutoInjectedPropertyWrapper() async {
+        DIContainer.shared = DIContainer()
+        await DIContainer.shared.register(Service.self, scope: .singleton) {
             HelloService()
         }
 
-        var wrapper = Inject<Service>()
-        try await wrapper.resolve(from: container)
+        @Injected var service: Service
 
-        #expect(wrapper.wrappedValue.greet() == "Hello World")
+        #expect(service.greet() == "Hello World")
     }
     
     @Test

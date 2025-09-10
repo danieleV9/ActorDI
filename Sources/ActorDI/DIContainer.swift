@@ -35,6 +35,8 @@ import Foundation
 /// - `DIScope` for available registration lifecycles.
 /// - `DIContainerError` for error scenarios.
 public actor DIContainer {
+    /// Shared global container used by the `@Injected` property wrapper.
+    public static var shared = DIContainer()
     private var singletons: [ObjectIdentifier: Any] = [:]
     private var factories: [ObjectIdentifier: () -> Any] = [:]
 
