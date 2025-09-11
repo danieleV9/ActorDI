@@ -8,6 +8,7 @@
 import Testing
 @testable import ActorDI
 
+@Suite(.serialized)
 struct ActorDITests {
     
     @Test
@@ -20,7 +21,7 @@ struct ActorDITests {
         }
         
         @Inject var service: Service
-        try await _service.resolve()
+        await _service.resolve()
 
         #expect(service.greet() == "Hello World")
     }
@@ -35,7 +36,7 @@ struct ActorDITests {
         }
 
         @Inject var service: Service
-        try await _service.resolve()
+        await _service.resolve()
 
         #expect(service.greet() == "Hello World")
     }
@@ -50,7 +51,7 @@ struct ActorDITests {
         }
 
         @Inject var service1: Service
-        try await _service1.resolve()
+        await _service1.resolve()
 
         #expect(service1.greet() == "Hello World")
         
@@ -59,7 +60,7 @@ struct ActorDITests {
         }
 
         @Inject var service2: Service
-        try await _service2.resolve()
+        await _service2.resolve()
 
         #expect(service2.greet() == "Ciao Mondo")
     }
@@ -74,7 +75,7 @@ struct ActorDITests {
         }
 
         @Inject var service1: Service
-        try await _service1.resolve()
+        await _service1.resolve()
 
         #expect(service1.greet() == "Hello World")
         
@@ -83,16 +84,6 @@ struct ActorDITests {
         }
 
         #expect(service1.greet() == "Hello World")
-    }
-    
-    @Test
-    func testResolutionFailsForUnregisteredType() async {
-        await DIContainer.shared.resetAll()
-        var wrapper = Inject<CiaoService>()
-
-        await #expect(throws: DIContainerError.self) {
-            try await wrapper.resolve()
-        }
     }
 
 }
