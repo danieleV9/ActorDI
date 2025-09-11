@@ -21,8 +21,6 @@ struct ActorDITests {
         }
         
         @Inject var service: Service
-        await _service.resolve()
-
         #expect(service.greet() == "Hello World")
     }
     
@@ -36,8 +34,6 @@ struct ActorDITests {
         }
 
         @Inject var service: Service
-        await _service.resolve()
-
         #expect(service.greet() == "Hello World")
     }
     
@@ -51,8 +47,6 @@ struct ActorDITests {
         }
 
         @Inject var service1: Service
-        await _service1.resolve()
-
         #expect(service1.greet() == "Hello World")
         
         await container.register(Service.self, scope: .transient) {
@@ -60,8 +54,6 @@ struct ActorDITests {
         }
 
         @Inject var service2: Service
-        await _service2.resolve()
-
         #expect(service2.greet() == "Ciao Mondo")
     }
     
@@ -75,8 +67,6 @@ struct ActorDITests {
         }
 
         @Inject var service1: Service
-        await _service1.resolve()
-
         #expect(service1.greet() == "Hello World")
         
         await container.register(Service.self, scope: .singleton) {
