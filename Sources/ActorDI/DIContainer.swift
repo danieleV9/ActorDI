@@ -76,4 +76,8 @@ public actor DIContainer {
         self.singletons.removeAll()
         self.factories.removeAll()
     }
+    
+    nonisolated public func getContainerDescription() -> String {
+        return "A dependency container. Use `DIContainer.shared` to access the default instance."
+    }
 }

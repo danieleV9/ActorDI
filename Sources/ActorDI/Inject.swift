@@ -47,6 +47,7 @@ import Foundation
 /// Caching behavior:
 /// - The resolved instance is stored in the wrapper’s private storage and reused for the lifetime
 ///   of the wrapper’s owning instance.
+
 @propertyWrapper
 public struct Inject<T: Sendable> {
     private var storage: T?
@@ -55,20 +56,29 @@ public struct Inject<T: Sendable> {
 
     public var wrappedValue: T {
         mutating get {
-            if storage == nil {
-                let semaphore = DispatchSemaphore(value: 0)
-                var resolved: T?
-                Task {
-                    resolved = try? await DIContainer.shared.resolve(T.self)
-                    semaphore.signal()
-                }
-                semaphore.wait()
-                guard let resolved else {
-                    fatalError("Dependency not found for \(T.self)")
-                }
-                storage = resolved
+            if let storage {
+                return storage
             }
-            return storage!
+
+            // Bridge the async resolution to sync using a semaphore.
+            let semaphore = DispatchSemaphore(value: 0)
+            var resolved: T?
+
+            Task.detached {
+                resolved = try? await DIContainer.shared.resolve(T.self)
+                semaphore.signal()
+            }
+
+            // Block until the async task completes.
+            semaphore.wait()
+
+            guard let value = resolved else {
+                fatalError("Dependency not found for \(T.self)")
+            }
+
+            storage = value
+            return value
         }
     }
 }
+

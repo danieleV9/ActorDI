@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "ActorDI",
     platforms: [
-        .iOS(.v13)
+        .iOS(.v16)
     ],
     products: [
         .library(
@@ -16,7 +16,10 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "ActorDI"
+            name: "ActorDI",
+            swiftSettings: [
+                .defaultIsolation(MainActor.self)
+            ]
         ),
         .testTarget(
             name: "ActorDITests",

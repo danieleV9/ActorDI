@@ -11,10 +11,14 @@ import Testing
 @Suite(.serialized)
 struct ActorDITests {
     
+    let container = DIContainer.shared
+    
+    init() async {
+        await DIContainer.shared.resetAll()
+    }
+    
     @Test
     func testSuccessfulResolutionForSingletion() async throws {
-        await DIContainer.shared.resetAll()
-        let container = DIContainer.shared
         
         await container.register(Service.self, scope: .singleton) {
             HelloService()
@@ -26,8 +30,6 @@ struct ActorDITests {
     
     @Test
     func testSuccessfulResolutionForTransient() async throws {
-        await DIContainer.shared.resetAll()
-        let container = DIContainer.shared
         
         await container.register(Service.self, scope: .transient) {
             HelloService()
@@ -39,8 +41,6 @@ struct ActorDITests {
     
     @Test
     func testResolutionForDoubleTransientRegistration() async throws {
-        await DIContainer.shared.resetAll()
-        let container = DIContainer.shared
         
         await container.register(Service.self, scope: .transient) {
             HelloService()
@@ -59,8 +59,6 @@ struct ActorDITests {
     
     @Test
     func testResolutionForDoubleSingletonRegistration() async throws {
-        await DIContainer.shared.resetAll()
-        let container = DIContainer.shared
         
         await container.register(Service.self, scope: .singleton) {
             HelloService()
