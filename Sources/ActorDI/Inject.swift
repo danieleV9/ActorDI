@@ -13,14 +13,6 @@ import Foundation
 /// from `DIContainer.shared` the first time the property is accessed. The resolved instance is cached
 /// for subsequent accesses.
 ///
-/// Resolution is performed synchronously from the caller’s perspective by internally bridging to
-/// async/await using a `DispatchSemaphore`. If the dependency cannot be resolved, the process
-/// terminates with a `fatalError`.
-///
-/// - Important: Because this wrapper blocks the current thread during the initial resolution,
-///   avoid accessing it on the main thread during performance‑sensitive paths or from contexts
-///   where blocking could cause deadlocks. Prefer kicking off access from an async context when possible.
-///
 /// - Warning: If `DIContainer.shared.resolve(_:)` throws or returns `nil`, this wrapper triggers
 ///   a `fatalError` with a message indicating the missing dependency type.
 ///
@@ -41,7 +33,7 @@ import Foundation
 /// ```
 ///
 /// Thread-safety:
-/// - The initial resolution uses a semaphore to wait for an async task to complete.
+/// - The initial resolution is isolated to DIContainer actor.
 /// - Subsequent accesses return the cached instance without additional synchronization.
 ///
 /// Caching behavior:
@@ -50,35 +42,15 @@ import Foundation
 
 @propertyWrapper
 public struct Inject<T: Sendable> {
-    private var storage: T?
 
-    public init() {}
-
-    public var wrappedValue: T {
-        mutating get {
-            if let storage {
-                return storage
-            }
-
-            // Bridge the async resolution to sync using a semaphore.
-            let semaphore = DispatchSemaphore(value: 0)
-            var resolved: T?
-
-            Task.detached {
-                resolved = try? await DIContainer.shared.resolve(T.self)
-                semaphore.signal()
-            }
-
-            // Block until the async task completes.
-            semaphore.wait()
-
-            guard let value = resolved else {
-                fatalError("Dependency not found for \(T.self)")
-            }
-
-            storage = value
-            return value
+    public var wrappedValue: T
+    
+    public init() async {
+        guard let instance = try? await DIContainer.shared.resolve(T.self) else {
+            fatalError("Dependency not found for \(T.self)")
         }
+        wrappedValue = instance
     }
+    
 }
 
